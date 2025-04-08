@@ -31,28 +31,51 @@ namespace rclcpp
 
 /// Create a default single-threaded executor and execute all available work exhaustively.
 /** \param[in] node_ptr Shared pointer to the node to spin. */
+[[deprecated("This function is deprecated, please explicitly create an executor to spin your nodes")]]
 RCLCPP_PUBLIC
 void
 spin_all(
   rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_ptr,
   std::chrono::nanoseconds max_duration);
 
+[[deprecated("This function is deprecated, please explicitly create an executor to spin your nodes")]]
 RCLCPP_PUBLIC
 void
 spin_all(rclcpp::Node::SharedPtr node_ptr, std::chrono::nanoseconds max_duration);
 
 /// Create a default single-threaded executor and execute any immediately available work.
 /** \param[in] node_ptr Shared pointer to the node to spin. */
+[[deprecated("This function is deprecated, please explicitly create an executor to spin your nodes")]]
 RCLCPP_PUBLIC
 void
 spin_some(rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_ptr);
 
+[[deprecated("This function is deprecated, please explicitly create an executor to spin your nodes")]]
 RCLCPP_PUBLIC
 void
 spin_some(rclcpp::Node::SharedPtr node_ptr);
 
 /// Create a default single-threaded executor and spin the specified node.
 /** \param[in] node_ptr Shared pointer to the node to spin. */
+template<typename ExecutorT = rclcpp::executors::SingleThreadedExecutor>
+RCLCPP_PUBLIC
+void
+spin(rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_ptr){
+  rclcpp::ExecutorOptions options;
+  options.context = node_ptr->get_context();
+  ExecutorT exec(options);
+  exec.add_node(node_ptr);
+  exec.spin();
+  exec.remove_node(node_ptr);
+}
+
+template<typename ExecutorT = rclcpp::executors::SingleThreadedExecutor>
+RCLCPP_PUBLIC
+void
+spin(rclcpp::Node::SharedPtr node_ptr){
+  spin<ExecutorT>(node_ptr->get_node_base_interface());
+}
+
 RCLCPP_PUBLIC
 void
 spin(rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_ptr);
@@ -60,6 +83,7 @@ spin(rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_ptr);
 RCLCPP_PUBLIC
 void
 spin(rclcpp::Node::SharedPtr node_ptr);
+
 
 namespace executors
 {
@@ -114,6 +138,7 @@ spin_node_until_future_complete(
 }  // namespace executors
 
 template<typename FutureT, typename TimeRepT = int64_t, typename TimeT = std::milli>
+[[deprecated("This function is deprecated, please explicitly create an executor to spin your nodes")]]
 rclcpp::FutureReturnCode
 spin_until_future_complete(
   rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_ptr,
@@ -125,9 +150,9 @@ spin_until_future_complete(
   rclcpp::executors::SingleThreadedExecutor executor(options);
   return executors::spin_node_until_future_complete<FutureT>(executor, node_ptr, future, timeout);
 }
-
 template<typename NodeT = rclcpp::Node, typename FutureT, typename TimeRepT = int64_t,
   typename TimeT = std::milli>
+[[deprecated("This function is deprecated, please explicitly create an executor to spin your nodes")]]
 rclcpp::FutureReturnCode
 spin_until_future_complete(
   std::shared_ptr<NodeT> node_ptr,

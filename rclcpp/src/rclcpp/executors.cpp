@@ -28,7 +28,9 @@ rclcpp::spin_all(
 void
 rclcpp::spin_all(rclcpp::Node::SharedPtr node_ptr, std::chrono::nanoseconds max_duration)
 {
+  RCPPUTILS_DEPRECATION_WARNING_OFF_START
   rclcpp::spin_all(node_ptr->get_node_base_interface(), max_duration);
+  RCPPUTILS_DEPRECATION_WARNING_OFF_END
 }
 
 void
@@ -49,12 +51,7 @@ rclcpp::spin_some(rclcpp::Node::SharedPtr node_ptr)
 void
 rclcpp::spin(rclcpp::node_interfaces::NodeBaseInterface::SharedPtr node_ptr)
 {
-  rclcpp::ExecutorOptions options;
-  options.context = node_ptr->get_context();
-  rclcpp::executors::SingleThreadedExecutor exec(options);
-  exec.add_node(node_ptr);
-  exec.spin();
-  exec.remove_node(node_ptr);
+  rclcpp::spin(node_ptr);
 }
 
 void

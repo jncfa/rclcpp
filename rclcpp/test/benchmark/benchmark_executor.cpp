@@ -22,6 +22,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rcpputils/scope_exit.hpp"
 #include "test_msgs/msg/empty.hpp"
+#include "rcpputils/compile_warnings.hpp"
 
 using namespace std::chrono_literals;
 using performance_test_fixture::PerformanceTest;
@@ -257,7 +258,9 @@ BENCHMARK_F(PerformanceTestExecutorSimple, spin_until_future_complete)(benchmark
   promise.set_value(true);
   auto shared_future = future.share();
 
+  RCPPUTILS_DEPRECATION_WARNING_OFF_START
   auto ret = rclcpp::spin_until_future_complete(node, shared_future, 1s);
+  RCPPUTILS_DEPRECATION_WARNING_OFF_END
   if (ret != rclcpp::FutureReturnCode::SUCCESS) {
     st.SkipWithError(rcutils_get_error_string().str);
   }
